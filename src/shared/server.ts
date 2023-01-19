@@ -1,17 +1,5 @@
-import express from 'express';
-import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
+import app from './app';
 
-const app = express();
-
-const prisma = new PrismaClient();
-
-app.use(cors());
-
-app.use(express.json());
-
-app.get('/teste', (req, res) => {
-  return res.sendStatus(200);
+app.listen(5555, () => {
+  console.log('Server listening on port 5555');
 });
-
-app.listen(3000);

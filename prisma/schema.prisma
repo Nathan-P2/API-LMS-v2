@@ -393,6 +393,7 @@ model carrinho_servico {
   servico_pagante_data               DateTime? @db.DateTime(0)
   servico_data_created               DateTime  @default(now()) @db.DateTime(0)
   servico_data_updated               DateTime  @default(now()) @db.DateTime(0)
+  empresa_id                         Int
   carrinho                           carrinho  @relation(fields: [carrinho_id], references: [carrinho_id], onUpdate: Restrict, map: "carrinho_servico_ibfk_1")
 
   @@index([carrinho_id], map: "carrinho_id")
@@ -1228,6 +1229,7 @@ model hubspot_deal {
   hubspot_deal_cycle_change hubspot_deal_cycle_change[]
   hubspot_deal_lost         hubspot_deal_lost[]
   hubspot_deal_won          hubspot_deal_won[]
+  hubspot_owner_activity    hubspot_owner_activity[]
 
   @@index([contact_id], map: "FK_1")
   @@index([hubspot_owner_id], map: "FK_3")
@@ -1343,6 +1345,7 @@ model hubspot_owner {
   hubspot_contact_cycle_change hubspot_contact_cycle_change[]
   hubspot_deal                 hubspot_deal[]
   hubspot_team                 hubspot_team?                  @relation(fields: [team_id], references: [team_id], map: "FK_13")
+  hubspot_owner_activity       hubspot_owner_activity[]
   hubspot_owner_team_change    hubspot_owner_team_change[]
 
   @@index([team_id], map: "FK_2")
@@ -1585,6 +1588,7 @@ model lms_escola {
   lms_escola_titulo  String?     @db.Text
   lms_escola_created DateTime?   @default(now()) @db.DateTime(0)
   lms_escola_updated DateTime?   @default(now()) @db.DateTime(0)
+  lms_escola_forum   String?     @db.Text
   lms_curso          lms_curso[]
 }
 
@@ -3577,6 +3581,7 @@ model sup_estornos {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model tabela_squad_growth {
   inteiro    Int?
   string     String?   @db.VarChar(1000)
@@ -3710,21 +3715,6 @@ model zendesk_users {
   @@index([nome(length: 768)], map: "nome_idx")
 }
 
-model comunicados_turma {
-  comunicado_id           Int       @id @default(autoincrement())
-  turma_id                Int
-  comunicado              String    @db.VarChar(401)
-  quantidade_like         Int?
-  quantidade_dislike      Int?
-  comunicado_data_created DateTime? @default(now()) @db.DateTime(0)
-  comunicado_data_updated DateTime? @default(now()) @db.DateTime(0)
-  comunicado_turma        String    @db.VarChar(20)
-  comunicado_curso        String?   @db.VarChar(70)
-  comunicado_curso_id     Int?
-
-  @@index([turma_id], map: "fk_turma_comunicados")
-}
-
 model hubspot_call_activities {
   call_id         BigInt    @id
   deal_id         BigInt?
@@ -3737,6 +3727,44 @@ model hubspot_call_activities {
   call_updated_at DateTime  @default(now()) @db.DateTime(0)
 
   @@index([deal_id], map: "FK_call_deal_1")
+}
+
+model hubspot_owner_activity {
+  owner_activity_id         Int            @id @default(autoincrement())
+  deal_id                   BigInt?
+  hubspot_owner_id          Int?
+  activity_type             String?        @db.VarChar(20)
+  activity_date             DateTime?      @db.DateTime(0)
+  owner_activity_created_at DateTime?      @default(now()) @db.DateTime(0)
+  owner_activity_updated_at DateTime       @default(now()) @db.DateTime(0)
+  hubspot_deal              hubspot_deal?  @relation(fields: [deal_id], references: [deal_id], onDelete: NoAction, onUpdate: NoAction, map: "hubspot_owner_activity_relation_1")
+  hubspot_owner             hubspot_owner? @relation(fields: [hubspot_owner_id], references: [hubspot_owner_id], onDelete: NoAction, onUpdate: NoAction, map: "hubspot_owner_activity_relation_2")
+
+  @@index([deal_id], map: "hubspot_owner_activity_relation_1")
+  @@index([hubspot_owner_id], map: "hubspot_owner_activity_relation_2")
+}
+
+model lms_comunicados_curtidas {
+  curtida_id    Int @id @default(autoincrement())
+  aluno_id      Int
+  comunicado_id Int
+  curso_id      Int
+}
+
+model lms_comunicados_turma {
+  comunicado_id           Int       @id @default(autoincrement())
+  turma_id                Int
+  comunicado              String    @db.VarChar(401)
+  quantidade_like         Int?
+  comunicado_data_created DateTime? @default(now()) @db.DateTime(0)
+  comunicado_data_updated DateTime? @default(now()) @db.DateTime(0)
+  comunicado_turma        String    @db.VarChar(20)
+  comunicado_curso        String?   @db.VarChar(70)
+  comunicado_curso_id     Int?
+  curtida_data_created    DateTime? @default(now()) @db.DateTime(0)
+  curtida_data_updated    DateTime? @default(now()) @db.DateTime(0)
+
+  @@index([turma_id], map: "fk_turma_comunicados")
 }
 
 enum agenda_versao_versao_tipo {
@@ -4053,11 +4081,11 @@ enum dnc_profissionais_profissional_status {
 }
 
 enum score_ranking_maior_impacto {
-  S
-  N
+  one @map("1")
+  zero @map("0")
 }
 
 enum lms_notificacao_notificacao_categoria {
-  S
-  N
+  one @map("1")
+  two @map("2")
 }
