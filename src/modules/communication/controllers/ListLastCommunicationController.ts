@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import listAllCommunicationUseCase from '../useCases/ListAllCommunicationUseCase';
+import listLastCommunicationUseCase from '../useCases/ListLastCommunicationUseCase';
 
-class ListAllCommunicationController {
+class ListLastCommunicationController {
   async execute(req: Request, res: Response): Promise<Response> {
     const courseId = parseInt(req.params.courseId);
 
     const courseCode = req.params.courseCode;
 
-    const response = await listAllCommunicationUseCase.execute(
+    const response = await listLastCommunicationUseCase.execute(
       courseId,
       courseCode,
     );
@@ -16,4 +16,4 @@ class ListAllCommunicationController {
   }
 }
 
-export default new ListAllCommunicationController();
+export default new ListLastCommunicationController();

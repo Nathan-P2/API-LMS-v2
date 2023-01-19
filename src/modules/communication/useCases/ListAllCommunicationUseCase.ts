@@ -1,10 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import moment from 'moment';
 
-export class ListAllCommunicationUseCase {
+class ListAllCommunicationUseCase {
   private prisma: PrismaClient;
+  private moment;
 
   constructor() {
     this.prisma = new PrismaClient();
+    this.moment = moment;
+    this.moment.locale('pt-BR');
   }
 
   async execute(courseId: number, classCode: string) {
@@ -19,21 +23,17 @@ export class ListAllCommunicationUseCase {
       },
     );
 
-    const options: object = {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    };
-
-    const response = listCommunications.map((element: any) => {
-      const obj = Object.assign({}, element);
-      element.comunicado_data_created = new Date(
-        element.comunicado_data_created,
-      ).toLocaleDateString('pt-BR', options);
-      return obj;
-    });
+    const response = listCommunications.map(
+      ({ comunicado_data_created, ...rest }) => ({
+        ...rest,
+        comunicado_data_created: this.moment(comunicado_data_created).format(
+          'LLL',
+        ),
+      }),
+    );
 
     return response;
   }
 }
+
+export default new ListAllCommunicationUseCase();
