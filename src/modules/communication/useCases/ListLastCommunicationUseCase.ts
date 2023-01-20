@@ -11,14 +11,26 @@ class ListLastCommunicationUseCase {
     this.moment.locale('pt-BR');
   }
 
-  async execute(courseId: number, classCode: string) {
+  async execute(courseId: number | null, classCode: string | null) {
+    if (!courseId) {
+      return {
+        statusCode: 400,
+        message: 'CourseId dont provided',
+      };
+    }
+
+    if (!classCode) {
+      return {
+        statusCode: 400,
+        message: 'ClassCode dont provided',
+      };
+    }
+
     const communication: any =
       await this.prisma.lms_comunicados_turma.findFirst({
         where: {
           comunicado_curso_id: courseId,
-          OR: {
-            comunicado_turma: classCode,
-          },
+          comunicado_turma: classCode,
         },
         orderBy: {
           comunicado_id: 'desc',
@@ -31,7 +43,10 @@ class ListLastCommunicationUseCase {
       ).format('LLL');
     }
 
-    return communication;
+    return {
+      statusCode: 200,
+      communication,
+    };
   }
 }
 

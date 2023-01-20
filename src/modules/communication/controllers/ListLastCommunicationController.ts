@@ -12,7 +12,7 @@ class ListLastCommunicationController {
       courseCode,
     );
 
-    return res.status(200).send(response);
+    return res.status(response.statusCode).send(response.communication);
   }
 }
 

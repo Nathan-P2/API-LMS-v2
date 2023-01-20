@@ -13,7 +13,7 @@ class CreateCommunicationController {
       curso_id,
     );
 
-    return res.status(201).send(response);
+    return res.status(response.statusCode).send(response.message);
   }
 }
 

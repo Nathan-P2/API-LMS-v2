@@ -9,7 +9,7 @@ class DeleteCommunicationController {
       parseInt(comunicadoId),
     );
 
-    return res.status(200).send(response);
+    return res.status(response.statusCode).send(response.message);
   }
 }
 

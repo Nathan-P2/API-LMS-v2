@@ -8,13 +8,48 @@ class CreateCommunicationUseCase {
   }
 
   async execute(
-    classId: number,
-    classCode: string,
-    course: string,
-    communication: string,
-    courseId: number,
+    classId: number | null,
+    classCode: string | null,
+    course: string | null,
+    communication: string | null,
+    courseId: number | null,
   ) {
-    const response = this.prisma.lms_comunicados_turma.create({
+    if (!classId) {
+      return {
+        statusCode: 400,
+        message: 'Invalid classId provided',
+      };
+    }
+
+    if (!classCode) {
+      return {
+        statusCode: 400,
+        message: 'Invalid classCode provided',
+      };
+    }
+
+    if (!course) {
+      return {
+        statusCode: 400,
+        message: 'Invalid course provided',
+      };
+    }
+
+    if (!communication) {
+      return {
+        statusCode: 400,
+        message: 'Invalid communication provided',
+      };
+    }
+
+    if (!courseId) {
+      return {
+        statusCode: 400,
+        message: 'Invalid courseId provided',
+      };
+    }
+
+    this.prisma.lms_comunicados_turma.create({
       data: {
         turma_id: classId,
         comunicado_turma: classCode,
@@ -24,7 +59,10 @@ class CreateCommunicationUseCase {
       },
     });
 
-    return response;
+    return {
+      statusCode: 201,
+      message: 'Communication created successfully',
+    };
   }
 }
 

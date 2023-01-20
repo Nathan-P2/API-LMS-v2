@@ -7,8 +7,22 @@ class EditCommunicationUseCase {
     this.prisma = new PrismaClient();
   }
 
-  async execute(communicationId: number, communication: string) {
-    const response = await this.prisma.lms_comunicados_turma.update({
+  async execute(communicationId: number | null, communication: string | null) {
+    if (!communicationId) {
+      return {
+        statusCode: 400,
+        message: 'CommunicationId dont provided',
+      };
+    }
+
+    if (!communication) {
+      return {
+        statusCode: 400,
+        message: 'Communication dont provided',
+      };
+    }
+
+    await this.prisma.lms_comunicados_turma.update({
       where: {
         comunicado_id: communicationId,
       },
@@ -17,7 +31,10 @@ class EditCommunicationUseCase {
       },
     });
 
-    return response;
+    return {
+      statusCode: 200,
+      message: 'Communication updated successfully',
+    };
   }
 }
 

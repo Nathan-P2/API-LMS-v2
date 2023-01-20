@@ -11,19 +11,31 @@ class ListAllCommunicationUseCase {
     this.moment.locale('pt-BR');
   }
 
-  async execute(courseId: number, classCode: string) {
+  async execute(courseId: number | null, classCode: string | null) {
+    if (!courseId) {
+      return {
+        statusCode: 400,
+        message: 'CourseId dont provided',
+      };
+    }
+
+    if (!classCode) {
+      return {
+        statusCode: 400,
+        message: 'ClassCode dont provided',
+      };
+    }
+
     const listCommunications = await this.prisma.lms_comunicados_turma.findMany(
       {
         where: {
           comunicado_curso_id: courseId,
-          OR: {
-            comunicado_turma: classCode,
-          },
+          comunicado_turma: classCode,
         },
       },
     );
 
-    const response = listCommunications.map(
+    const communications = listCommunications.map(
       ({ comunicado_data_created, ...rest }) => ({
         ...rest,
         comunicado_data_created: this.moment(comunicado_data_created).format(
@@ -32,7 +44,10 @@ class ListAllCommunicationUseCase {
       }),
     );
 
-    return response;
+    return {
+      statusCode: 200,
+      communications,
+    };
   }
 }
 

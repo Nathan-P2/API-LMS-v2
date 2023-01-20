@@ -7,14 +7,24 @@ class DeleteCommunicationUseCase {
     this.prisma = new PrismaClient();
   }
 
-  async execute(communicationId: number) {
-    const response = await this.prisma.lms_comunicados_turma.delete({
+  async execute(communicationId: number | null) {
+    if (!communicationId) {
+      return {
+        statusCode: 400,
+        message: 'CommunicationId dont provided',
+      };
+    }
+
+    await this.prisma.lms_comunicados_turma.delete({
       where: {
         comunicado_id: communicationId,
       },
     });
 
-    return response;
+    return {
+      statusCode: 200,
+      message: 'Communication deleted successfully',
+    };
   }
 }
 
