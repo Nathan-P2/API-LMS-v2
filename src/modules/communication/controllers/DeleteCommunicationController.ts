@@ -3,13 +3,13 @@ import deleteCommunicationUseCase from '../useCases/DeleteCommunicationUseCase';
 
 class DeleteCommunicationController {
   async execute(req: Request, res: Response): Promise<Response> {
-    const comunicadoId = req.body.comunicadoId;
+    const communicationId = req.params.communicationId;
 
     const response = await deleteCommunicationUseCase.execute(
-      parseInt(comunicadoId),
+      parseInt(communicationId),
     );
 
-    return res.status(response.statusCode).send(response.message);
+    return res.status(response.statusCode).send({ message: response.message });
   }
 }
 

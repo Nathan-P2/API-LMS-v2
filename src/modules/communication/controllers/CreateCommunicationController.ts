@@ -3,17 +3,18 @@ import createCommunicationUseCase from '../useCases/CreateCommunicationUseCase';
 
 class CreateCommunicationController {
   async execute(req: Request, res: Response): Promise<Response> {
-    const { turma_id, curso, turma, comunicado, curso_id } = req.body;
+    const { classId, classCode, courseTitle, communication, courseId } =
+      req.body;
 
     const response = await createCommunicationUseCase.execute(
-      turma_id,
-      curso,
-      turma,
-      comunicado,
-      curso_id,
+      classId,
+      classCode,
+      courseTitle,
+      communication,
+      courseId,
     );
 
-    return res.status(response.statusCode).send(response.message);
+    return res.status(response.statusCode).send({ message: response.message });
   }
 }
 

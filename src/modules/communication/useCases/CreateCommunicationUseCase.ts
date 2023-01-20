@@ -49,7 +49,7 @@ class CreateCommunicationUseCase {
       };
     }
 
-    this.prisma.lms_comunicados_turma.create({
+    await this.prisma.lms_comunicados_turma.create({
       data: {
         turma_id: classId,
         comunicado_turma: classCode,

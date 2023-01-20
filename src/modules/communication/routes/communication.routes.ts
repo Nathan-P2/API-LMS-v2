@@ -18,7 +18,7 @@ communicationRoutes.get(
 );
 
 communicationRoutes.delete(
-  '/communication/delete',
+  '/communication/delete/:communicationId',
   deleteCommunicationController.execute,
 );
 
